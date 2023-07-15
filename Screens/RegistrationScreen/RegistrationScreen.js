@@ -5,6 +5,8 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback, 
+  Keyboard, 
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
@@ -20,8 +22,6 @@ const RegistrationScreen = () => {
   const [visiblePassword, setVisiblePassword] = useState(false);
   const [userPhoto, setUserPhoto] = useState(null);
   const [focusedInput, setFocusedInput] = useState(null);
-
-
 
   const handleLoginPress = () => {
     console.log("Login pressed");
@@ -69,28 +69,29 @@ const RegistrationScreen = () => {
     setUserPhoto(null);
   };
 
+  const clearForm = () => {
+    setName("");
+    setEmail("");
+    setPassword("");
+    setUserPhoto(null);
+  };
+
   const onRegistration = () => {
+    if (!name || !email || !password) {
+      Alert.alert("Помилка", "Будь ласка, заповніть усі поля");
+      return;
+    }
+    console.log(name, email, password);
+
     Alert.alert(
-      "Credentials",
+      "Реєстрація успішна",
       `login: ${name}, email: ${email}, password: ${password}`,
-      [
-        {
-          text: "Ok",
-          onPress: () => {
-            console.log("ok pressed");
-          },
-        },
-        {
-          text: "Cancel",
-          onPress: () => {
-            console.log("cancel pressed");
-          },
-        },
-      ]
     );
+    clearForm();
   };
 
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image
@@ -122,6 +123,7 @@ const RegistrationScreen = () => {
 
       <View style={styles.formContainer}>
         <Text style={styles.heading}>Реєстрація</Text>
+        
         <KeyboardAvoidingView
           behavior={Platform.OS == "ios" ? "padding" : "height"}
         >
@@ -137,6 +139,7 @@ const RegistrationScreen = () => {
             autoComplete="name"
             onChangeText={setName}
           />
+
           <TextInput
             style={[
               styles.input,
@@ -149,17 +152,17 @@ const RegistrationScreen = () => {
             autoComplete="email"
             value={email}
             placeholder="Адреса електронної пошти"
-
           />
           <View style={styles.passwordInputContainer}>
-            <TextInput              
+            <TextInput
               placeholder="Пароль"
               style={[
-                styles.input,styles.lastInput,
+                styles.input,
+                styles.lastInput,
                 focusedInput === "Пароль" && styles.inputFocused,
-              ]}            
+              ]}
               onFocus={() => handleFocus("Пароль")}
-              onBlur={handleBlur}            
+              onBlur={handleBlur}
               value={password}
               autoComplete="password"
               secureTextEntry={!visiblePassword}
@@ -175,6 +178,7 @@ const RegistrationScreen = () => {
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
+  
         <TouchableOpacity style={styles.button} onPress={onRegistration}>
           <Text style={styles.buttonText}>Зареєструватися</Text>
         </TouchableOpacity>
@@ -186,6 +190,7 @@ const RegistrationScreen = () => {
         </View>
       </View>
     </View>
+    </TouchableWithoutFeedback>
   );
 };
 
